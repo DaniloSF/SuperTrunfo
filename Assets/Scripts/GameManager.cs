@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
             Vector3 posicao = new Vector3(0, 0, 0);
             nomeDaCarta = "Carta " + (i+1);
             GameObject carta = Instantiate(cartaPrefab, posicaoCartasJogador.transform.position, Quaternion.identity);
-            cartaSO = (CartaSO) (Resources.Load<CartaSO>(nomeDaCarta));
+            cartaSO = (Resources.Load<CartaSO>("CartasSO/" + nomeDaCarta));
             carta.GetComponent<CartaScript>().identificadorDaCarta = cartaSO;
             float novoX = carta.transform.position.x + (-0.2f*i);
             carta.transform.position = new Vector3 (novoX, carta.transform.position.y , carta.transform.position.z);
