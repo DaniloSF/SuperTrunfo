@@ -96,4 +96,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   identificadorDaCarta: {fileID: 11400000, guid: 4cd02cdb68c04e048abd75e74034833a, type: 2}
-  estaVirada: 0
+  faceParaCima: 1

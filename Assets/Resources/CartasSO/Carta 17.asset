@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adc44795ffeb98040adeb03f49eb9b90, type: 3}
   m_Name: Carta 17
   m_EditorClassIdentifier: 
-  verso: {fileID: 0}
-  frente: {fileID: 0}
+  verso: {fileID: 21300000, guid: 6ff5f2aad3a8570458ae21f9fa186a8b, type: 3}
+  frente: {fileID: 21300000, guid: 1afbf2715e9c63a489b6e0bdbd4da924, type: 3}
   nome: "Esfiha Aboli\xE7\xE3o "
   numero: 17
   popularidade: 4
