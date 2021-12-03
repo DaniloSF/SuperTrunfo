@@ -5,17 +5,25 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
+/// <summary>
+/// Neste Script é feito todo o controle geral do jogo e administração das regras
+/// </summary>
+
 public class GameManager : MonoBehaviour
 {
-    public int totalDeCartas = 20;
-    public GameObject cartaPrefab;
-    public GameObject posicaoCartasJogador, posicaoCartasAdversario;
-    public List<GameObject> Baralho = new List<GameObject>();
-    public List<GameObject> CartasDoPlayer = new List<GameObject>();
-    public List<GameObject> CartasDoAdversario = new List<GameObject>();
+    public int totalDeCartas = 20;              // Variavel que controla a quantidade de cartas do jogo
+    public GameObject cartaPrefab;              // Prefab de cada carta
+    public GameObject posicaoCartasJogador, posicaoCartasAdversario;        // GameObject que já estará na cena e mostra onde se
+                                                                                // disposta cada monte de carta
+    public List<GameObject> Baralho = new List<GameObject>();                   // Lista usada para controlar TODAS as cartas na mesa 
+    public List<GameObject> CartasDoPlayer = new List<GameObject>();            // Lista usada para controlar as cartas do jogador
+    public List<GameObject> CartasDoAdversario = new List<GameObject>();        // Lista usada para controlar as cartas do adversário
 
     
-    
+    /*
+     * No método start, a principio temo o chamdo do método para gerar o baralho e em seguida
+     * viramos todas as cartas para baixo.
+     */
     void Start()
     {
         GeraBaralho();
@@ -26,6 +34,14 @@ public class GameManager : MonoBehaviour
         
     }
 
+    
+    /*
+     * Para o método GeraBaralho temos uma iteração inicial para instanciar todas as 20 cartas do baralho, adicionar
+     * seu respectivo ScriptableObject de cada uma das cartas e depois adiciona-las na lista Baralho.
+     * Em seguida chamamos a função Shuffle que faz o embaralhamento das cartas (na propria lista Baralho)
+     * Depois chamamos a função SeparaBaralho que distribui as cartas entre player e adversário.
+     * E por ultimo colocamos cada monte de carta em seu local correto
+     */
     public void GeraBaralho()
     {
         string nomeDaCarta;
@@ -36,8 +52,8 @@ public class GameManager : MonoBehaviour
             Vector3 posicao = new Vector3(0, 0, 0);
             nomeDaCarta = "Carta " + (i+1);
             GameObject carta = Instantiate(cartaPrefab, posicaoCartasJogador.transform.position, Quaternion.identity);
-            cartaSO = (Resources.Load<CartaSO>("CartasSO/" + nomeDaCarta));
-            carta.name = nomeDaCarta;
+            cartaSO = (Resources.Load<CartaSO>("CartasSO/" + nomeDaCarta)); // Buscando o SciptableObject de cada carta 
+            carta.name = nomeDaCarta;       // Alterando o nome do GameObject na hierarquia
             CartaScript cartaScript = carta.GetComponent<CartaScript>();
             cartaScript.identificadorDaCarta = cartaSO;
             Baralho.Add(carta);
@@ -55,6 +71,10 @@ public class GameManager : MonoBehaviour
         
     }
 
+    /*
+     * Essa função recebe 2 parametros que são a carta e o monte do jogador para qual a carta deve ir. Em seguida ela
+     * faz o monte ser um pai da carta na hierarquia e em seguida move a carta até o local de seu pai na tela.
+     */
     public void AdicionaNoMonte(GameObject carta, GameObject monteASerAdd)
     {
         carta.transform.parent = monteASerAdd.transform;
@@ -62,6 +82,10 @@ public class GameManager : MonoBehaviour
     }
     
 
+    /*
+     * Esta função distribui as cartas (que estão na lista Baralho) para cada um dos jogadores na sequencia que elas estão
+     * dispostas. Uma vez que, antes dessa função, chamamos a função para embaralhar a lista Baralho.
+     */
     private void SeparaBaralho()
     {
         int cartasParaCadaJogador = totalDeCartas / 2;
@@ -80,7 +104,9 @@ public class GameManager : MonoBehaviour
 
 
     /*
-     * Esta é a função responsavel por embaralhar o baralho, após ele ter sido gereado
+     * Esta é a função responsavel por embaralhar o baralho, após ele ter sido gereado. Durante
+     * a iteração, trocamos o elemento atual da iteração com o elemento de indice r que é gerado aleatoriamente
+     * entre o indice atual da iteração e o tamanho total da lista.
      */
     
     public static void Shuffle<GameObject>(List<GameObject> list) {
@@ -96,10 +122,6 @@ public class GameManager : MonoBehaviour
 
     
     
-    /*
-     * float novoX = carta.transform.position.x + (-0.2f*i);
-            carta.transform.position = new Vector3(novoX, carta.transform.position.y, carta.transform.position.z);
-     */
 
     // Update is called once per frame
     void Update()
