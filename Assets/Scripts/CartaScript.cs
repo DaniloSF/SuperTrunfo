@@ -9,7 +9,9 @@ public class CartaScript : MonoBehaviour
 {
     public CartaSO identificadorDaCarta;
     public bool faceParaCima;
-    private SpriteRenderer spriteDaCarta;
+
+    [HideInInspector]
+    public SpriteRenderer spriteDaCarta;
 
     private void Start()
     {
@@ -34,4 +36,5 @@ public class CartaScript : MonoBehaviour
         spriteDaCarta.sprite = s1;
     }
 
+    
 }
