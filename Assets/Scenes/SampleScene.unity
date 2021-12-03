@@ -470,6 +470,76 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &602365813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 602365816}
+  - component: {fileID: 602365815}
+  - component: {fileID: 602365814}
+  m_Layer: 0
+  m_Name: Monte
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &602365814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 602365813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96a717d8b3025b498a9d918b038c20a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!61 &602365815
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 602365813}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 5, y: 7.26}
+    newSize: {x: 5, y: 7.26}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5, y: 7.26}
+  m_EdgeRadius: 0
+--- !u!4 &602365816
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 602365813}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &986025458
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,12 +579,15 @@ MonoBehaviour:
   cartaPrefab: {fileID: 4510701632670077772, guid: adaf7225e8de78345be5882e2acb6e2c, type: 3}
   posicaoCartasJogador: {fileID: 595138741}
   posicaoCartasAdversario: {fileID: 273766257}
+  posicaoCartasMonte: {fileID: 602365813}
   Baralho: []
   CartasDoPlayer: []
   CartasDoAdversario: []
+  CartasDoMonte: []
   PlayerCartasColider: {fileID: 0}
   Escolhas: {fileID: 2111948817}
   statsEscolhido: -1
+  delay: 0
 --- !u!4 &986025460
 Transform:
   m_ObjectHideFlags: 0

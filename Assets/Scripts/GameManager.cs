@@ -15,17 +15,20 @@ public class GameManager : TurnManager
     public int totalDeCartas = 20;              // Variavel que controla a quantidade de cartas do jogo
 
     public GameObject cartaPrefab;              // Prefab de cada carta
-    public GameObject posicaoCartasJogador, posicaoCartasAdversario;        // GameObject que já estará na cena e mostra onde se
+    public GameObject posicaoCartasJogador, posicaoCartasAdversario, 
+        posicaoCartasMonte;                                                 // GameObject que já estará na cena e mostra onde se
                                                                             // disposta cada monte de carta
     public List<GameObject> Baralho = new List<GameObject>();               // Lista usada para controlar TODAS as cartas na mesa 
     public List<GameObject> CartasDoPlayer = new List<GameObject>();        // Lista usada para controlar as cartas do jogador
     public List<GameObject> CartasDoAdversario = new List<GameObject>();    // Lista usada para controlar as cartas do adversário
+    public List<GameObject> CartasDoMonte = new List<GameObject>();         // Lista usada para controlar as cartas acumuladas no monte
     
     public BoxCollider2D PlayerCartasColider;
     //public TurnManager turnManager;
     public GameObject Escolhas;
     public int statsEscolhido = -1;
 
+    public float delay = 0f;
 
     /*
      * No método start, a principio temo o chamdo do método para gerar o baralho e em seguida
@@ -194,7 +197,7 @@ public class GameManager : TurnManager
                 DecidirPrimeiro();
                 gameStart = false;
             }
-            switch ((TurnState) turnState)
+            switch ((TurnState)turnState)
             {
                 case TurnState.Comeco:
                     statsEscolhido = -1;
@@ -202,55 +205,90 @@ public class GameManager : TurnManager
                     break;
 
                 case TurnState.Escolher:
+                    MostrarPrimeiraCarta(CartasDoPlayer);
                     MostrarEscolhas();
                     break;
                 case TurnState.Comparar:
-                    MostrarPrimeiraCartaInimigo();
+                    MostrarPrimeiraCarta(CartasDoAdversario);
                     CompararValores();
-
+                    delay = 1f;
                     break;
                 case TurnState.Derrota:
-                    AdicionaNoMonteInimigo();
+                    if (delay > float.Epsilon) { 
+                        delay -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        if (CartasDoMonte.Count > 0)
+                        {
+                            AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Comeco);
+                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 0, posicaoCartasAdversario, TurnState.Comeco);
+                        }
+                        else
+                        {
+                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Comeco);
+                        }
+                        delay = 1f;
+                    }
                     break;
                     
                 case TurnState.Vitoria:
-                    AdicionaNoMonteDoPlayer();
+                    if (delay > float.Epsilon)
+                    {
+                        delay -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        if (CartasDoMonte.Count > 0)
+                        {
+                            AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoPlayer, 1, posicaoCartasJogador, TurnState.Fim);
+                            AdicionaNoMonte(CartasDoAdversario, 1, CartasDoPlayer, 0, posicaoCartasJogador, TurnState.Fim);
+                        }
+                        else
+                        {
+                            AdicionaNoMonte(CartasDoAdversario, 1, CartasDoPlayer, 1, posicaoCartasJogador, TurnState.Fim);
+                        }
+                        delay = 1f;
+                    }
+
+                    break;
+                case TurnState.Empate:
+                    if (delay > float.Epsilon)
+                        delay -= Time.deltaTime;
+                    else
+                    {
+                        print(CartasDoAdversario);
+                        print(CartasDoMonte);
+                        print(posicaoCartasMonte);
+                        AdicionaNoMonte(CartasDoAdversario, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
+                        AdicionaNoMonte(CartasDoPlayer, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
+                        delay = 1f;
+                    }
+                    break;
+
+                case TurnState.Fim:
+                    if(delay > float.Epsilon)
+                    {
+                        delay -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        SetTurnState(TurnState.Comeco);
+                    }
                     break;
             }
-            MostrarPrimeiraCarta();
+            
         }
         
     }
 
-    /*
-     * Chama VirarCarta da primeira carta na lista do Inimigo e poe em relevo no axis Z para sorting order
-     */
-    private void MostrarPrimeiraCartaInimigo()
-    {
-        var carta = GetPrimeiraCartaInimigo();
-        if (!carta.faceParaCima)
-        {
-            carta.VirarCarta();
-            Vector3 pos = carta.transform.position;
-            pos.z = (carta.transform.parent.position.z - 0.1f);
-            carta.transform.position = pos;
-        }
-    }
-
-    /*
-     * Retorna a referencia da primeira carta do Inimigo
-     */
-    private CartaScript GetPrimeiraCartaInimigo()
-    {
-        return CartasDoAdversario.ElementAt(0).GetComponent<CartaScript>();
-    }
-
+        
     /*
      * Chama VirarCarta da primeira carta na lista do Player e poe em relevo no axis Z para sorting order
      */
-    private void MostrarPrimeiraCarta()
+    private void MostrarPrimeiraCarta(List<GameObject> list)
     {
-        var carta = GetPrimeiraCarta();
+        var carta = GetPrimeiraCarta(list);
         if (!carta.faceParaCima)
         {
             carta.VirarCarta();
@@ -263,9 +301,9 @@ public class GameManager : TurnManager
     /*
      * Retorna a referencia da primeira carta do Player
      */
-    private CartaScript GetPrimeiraCarta()
+    private CartaScript GetPrimeiraCarta(List<GameObject> list)
     {
-        return CartasDoPlayer.ElementAt(0).GetComponent<CartaScript>();
+        return list.ElementAt(0).GetComponent<CartaScript>();
     }
 
     
@@ -275,8 +313,8 @@ public class GameManager : TurnManager
      */
     private void CompararValores()
     {
-        var cartaP = GetPrimeiraCarta();
-        var cartaI = GetPrimeiraCartaInimigo();
+        var cartaP = GetPrimeiraCarta(CartasDoPlayer);
+        var cartaI = GetPrimeiraCarta(CartasDoAdversario);
         var cartaP_ID = cartaP.identificadorDaCarta;
         var cartaI_ID = cartaI.identificadorDaCarta;
         var cartaP_Stat = cartaP_ID.popularidade;
@@ -323,45 +361,48 @@ public class GameManager : TurnManager
     /*
      *  Função chamada no final da comaparação para adicionar as cartas ao player
      */
-    private void AdicionaNoMonteDoPlayer()
+    private void AdicionaNoMonte(List<GameObject> from, int fromCount, List<GameObject> to, int toCount, GameObject posicao,  TurnState nextTurnState)
     {
-        var cartaP = CartasDoPlayer.ElementAt(0);
-        var cartaI = CartasDoAdversario.ElementAt(0);
-        CartasDoAdversario.RemoveAt(0);
-        CartasDoPlayer.RemoveAt(0);
+        print("A lista é igual o monte: " + from.Equals(CartasDoMonte));
+        print("Quantas cartas tem: " + from.Count);
+        for(var i = 0; from.Count > 0 && i < fromCount; i++)
+        {
+            print(fromCount);
+            CartaScript cartaF = PopLista(from);
 
-        cartaP.transform.parent = posicaoCartasJogador.transform;
-        CartasDoPlayer.Add(cartaP);
-        cartaI.transform.parent = posicaoCartasJogador.transform;
-        CartasDoPlayer.Add(cartaI);
+            if (cartaF != null)
+            {
+                cartaF.transform.parent = posicao.transform;
+                to.Add(cartaF.gameObject);
+                cartaF.VirarCarta();
+                StartCoroutine(AdicionaNoMonte(cartaF.gameObject, posicao));
+            }
+            
+        }
+        
+        for(var i = 0; to.Count > 0 && i < toCount; i++)
+        {
+            CartaScript cartaT = PopLista(to);
 
-        cartaP.GetComponent<CartaScript>().VirarCarta();
-        cartaI.GetComponent<CartaScript>().VirarCarta();
-
-        StartCoroutine(AdicionaNoMonte(cartaP, posicaoCartasJogador));
-        StartCoroutine(AdicionaNoMonte(cartaI, posicaoCartasJogador));
-        SetTurnState(TurnState.Comeco);
+            if (cartaT != null)
+            {
+                cartaT.transform.parent = posicao.transform;
+                to.Add(cartaT.gameObject);
+                cartaT.VirarCarta();
+                StartCoroutine(AdicionaNoMonte(cartaT.gameObject, posicao));
+            }
+        }
+        
+        
+        SetTurnState(nextTurnState);
     }
-    /*
-     *  Função chamada no final da comaparação para adicionar as cartas ao inimigo
-     */
-    private void AdicionaNoMonteInimigo()
+
+    private CartaScript PopLista(List<GameObject> list)
     {
-        var cartaP = CartasDoPlayer.ElementAt(0);
-        var cartaI = CartasDoAdversario.ElementAt(0);
-        CartasDoAdversario.RemoveAt(0);
-        CartasDoPlayer.RemoveAt(0);
-
-        cartaP.transform.parent = posicaoCartasAdversario.transform;
-        CartasDoAdversario.Add(cartaP);
-        cartaI.transform.parent = posicaoCartasAdversario.transform;
-        CartasDoAdversario.Add(cartaI);
-
-        cartaP.GetComponent<CartaScript>().VirarCarta();
-        cartaI.GetComponent<CartaScript>().VirarCarta();
-
-        StartCoroutine(AdicionaNoMonte(cartaP, posicaoCartasAdversario));
-        StartCoroutine(AdicionaNoMonte(cartaI, posicaoCartasAdversario));
-        SetTurnState(TurnState.Comeco);
+        if (list.Count == 0) return null;
+        var cartaP = GetPrimeiraCarta(list);
+        list.RemoveAt(0);
+        return cartaP;
     }
+
 }

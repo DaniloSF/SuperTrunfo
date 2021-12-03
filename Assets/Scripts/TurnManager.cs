@@ -17,7 +17,8 @@ public class TurnManager : MonoBehaviour
         Comparar,
         Empate,
         Vitoria,
-        Derrota
+        Derrota,
+        Fim
     }
     public bool gameStart = true;
     public bool gameReady = false;
@@ -51,7 +52,7 @@ public class TurnManager : MonoBehaviour
     public void SetTurnState(TurnState state)
     {
         turnState = (int)state;
-        print("TurnState: " + turnState);
+        //print("TurnState: " + turnState);
     }
 
     public void SetGameReady(bool v)
