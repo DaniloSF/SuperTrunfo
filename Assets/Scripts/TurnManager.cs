@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+
+/// <summary>
+/// Este é o script que contém as funções referentes a turnos dentro do jogo, requisitados no GameManager
+/// </summary>
 public class TurnManager : MonoBehaviour
 {
     public enum TurnState

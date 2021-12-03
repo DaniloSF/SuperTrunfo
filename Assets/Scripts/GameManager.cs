@@ -5,6 +5,10 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
+
+/// <summary>
+/// Esse é o Script que coordena todo cerebro do jogo, mantendo estados e requisitando mudança de turnos
+/// </summary>
 public class GameManager : TurnManager
 {
 
@@ -71,6 +75,10 @@ public class GameManager : TurnManager
 
     }
 
+    /*
+     * Metodo responsavel por colcocar cada carta na mao correta de cada player
+     * Feito IEnumerator para ser assincrono e poder animar individualmente e alternadamente
+     */
     private IEnumerator DistribuiCarta()
     {
         for(int i = 0; i < CartasDoPlayer.Count; i++)
@@ -131,7 +139,8 @@ public class GameManager : TurnManager
     /*
      * Esta é a função responsavel por embaralhar o baralho, após ele ter sido gereado. Durante
      * a iteração, trocamos o elemento atual da iteração com o elemento de indice r que é gerado aleatoriamente
-     * entre o indice atual da iteração e o tamanho total da lista.
+     * entre o indice atual da iteração e o tamanho total da lista. Manipulamos a posição para que não há
+     * luta de quem está na frente pelo Sorting Layer
      */
     
     public static void Shuffle(List<GameObject> list) {
@@ -155,6 +164,9 @@ public class GameManager : TurnManager
         
     }
 
+    /*
+     * Funcao que os botoes das escolhas referenciam ao serem clicadas, muda o estado do turno para a comparação
+     */
     internal void SetApertou(int stat)
     {
         statsEscolhido = stat;
@@ -164,6 +176,9 @@ public class GameManager : TurnManager
         }
     }
 
+    /*
+     * Ativa o gameObject parente das Escolhas
+     */
     private void MostrarEscolhas()
     {
         Escolhas.SetActive(isPlayerTurn);
@@ -200,6 +215,9 @@ public class GameManager : TurnManager
         
     }
 
+    /*
+     * Chama VirarCarta da primeira carta na lista do Inimigo e poe em relevo no axis Z para sorting order
+     */
     private void MostrarPrimeiraCartaInimigo()
     {
         var carta = GetPrimeiraCartaInimigo();
@@ -212,11 +230,42 @@ public class GameManager : TurnManager
         }
     }
 
+    /*
+     * Retorna a referencia da primeira carta do Inimigo
+     */
     private CartaScript GetPrimeiraCartaInimigo()
     {
         return CartasDoAdversario.ElementAt(0).GetComponent<CartaScript>();
     }
 
+    /*
+     * Chama VirarCarta da primeira carta na lista do Player e poe em relevo no axis Z para sorting order
+     */
+    private void MostrarPrimeiraCarta()
+    {
+        var carta = GetPrimeiraCarta();
+        if (!carta.faceParaCima)
+        {
+            carta.VirarCarta();
+            Vector3 pos = carta.transform.position;
+            pos.z = (carta.transform.parent.position.z - 0.1f);
+            carta.transform.position = pos;
+        }
+    }
+
+    /*
+     * Retorna a referencia da primeira carta do Player
+     */
+    private CartaScript GetPrimeiraCarta()
+    {
+        return CartasDoPlayer.ElementAt(0).GetComponent<CartaScript>();
+    }
+
+    
+    /*
+     * Chamado assim que entrar no TurnState de Comparar, faz a comparação entre os valores escolhidos 
+     * e coloca o state no resultado correspondente
+     */
     private void CompararValores()
     {
         var cartaP = GetPrimeiraCarta();
@@ -243,20 +292,5 @@ public class GameManager : TurnManager
         }
     }
 
-    private void MostrarPrimeiraCarta()
-    {
-        var carta = GetPrimeiraCarta();
-        if (!carta.faceParaCima)
-        {
-            carta.VirarCarta();
-            Vector3 pos = carta.transform.position;
-            pos.z = (carta.transform.parent.position.z - 0.1f);
-            carta.transform.position = pos;
-        }
-    }
-
-    private CartaScript GetPrimeiraCarta()
-    {
-        return CartasDoPlayer.ElementAt(0).GetComponent<CartaScript>();
-    }
+    
 }
