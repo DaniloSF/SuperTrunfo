@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 
 /// <summary>
-/// Este é o script que contém as funções referentes a turnos dentro do jogo, requisitados no GameManager
+/// Este ï¿½ o script que contï¿½m as funï¿½ï¿½es referentes a turnos dentro do jogo, requisitados no GameManager
 /// </summary>
 public class TurnManager : MonoBehaviour
 {
@@ -51,7 +51,7 @@ public class TurnManager : MonoBehaviour
     public void SetTurnState(TurnState state)
     {
         turnState = (int)state;
-        print(turnState);
+        print("TurnState: " + turnState);
     }
 
     public void SetGameReady(bool v)

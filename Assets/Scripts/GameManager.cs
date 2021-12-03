@@ -209,6 +209,13 @@ public class GameManager : TurnManager
                     CompararValores();
 
                     break;
+                case TurnState.Derrota:
+                    AdicionaNoMonteInimigo();
+                    break;
+                    
+                case TurnState.Vitoria:
+                    AdicionaNoMonteDoPlayer();
+                    break;
             }
             MostrarPrimeiraCarta();
         }
@@ -272,18 +279,39 @@ public class GameManager : TurnManager
         var cartaI = GetPrimeiraCartaInimigo();
         var cartaP_ID = cartaP.identificadorDaCarta;
         var cartaI_ID = cartaI.identificadorDaCarta;
+        var cartaP_Stat = cartaP_ID.popularidade;
+        var cartaI_Stat = cartaI_ID.popularidade;
 
         if (statsEscolhido != -1)
         {
-            switch (cartaP_ID.popularidade.CompareTo(cartaI_ID.popularidade))
+            print("Stat: " + statsEscolhido);
+            switch (statsEscolhido)
+            {
+                case 0:
+                    cartaP_Stat = cartaP_ID.popularidade;
+                    cartaI_Stat = cartaI_ID.popularidade;
+                    break;
+                case 1:
+                    cartaP_Stat = cartaP_ID.preco;
+                    cartaI_Stat = cartaI_ID.preco;
+                    break;
+                case 2:
+                    cartaP_Stat = cartaP_ID.saciedade;
+                    cartaI_Stat = cartaI_ID.saciedade;
+                    break;
+            }
+            switch (cartaP_Stat.CompareTo(cartaI_Stat))
             {
                 case -1:
+                    print("Derrota");
                     SetTurnState(TurnState.Derrota);
                     break;
                 case 0:
+                    print("Empate");
                     SetTurnState(TurnState.Empate);
                     break;
                 case 1:
+                    print("Vitoria");
                     SetTurnState(TurnState.Vitoria);
                     break;
             }
@@ -292,5 +320,48 @@ public class GameManager : TurnManager
         }
     }
 
-    
+    /*
+     *  Função chamada no final da comaparação para adicionar as cartas ao player
+     */
+    private void AdicionaNoMonteDoPlayer()
+    {
+        var cartaP = CartasDoPlayer.ElementAt(0);
+        var cartaI = CartasDoAdversario.ElementAt(0);
+        CartasDoAdversario.RemoveAt(0);
+        CartasDoPlayer.RemoveAt(0);
+
+        cartaP.transform.parent = posicaoCartasJogador.transform;
+        CartasDoPlayer.Add(cartaP);
+        cartaI.transform.parent = posicaoCartasJogador.transform;
+        CartasDoPlayer.Add(cartaI);
+
+        cartaP.GetComponent<CartaScript>().VirarCarta();
+        cartaI.GetComponent<CartaScript>().VirarCarta();
+
+        StartCoroutine(AdicionaNoMonte(cartaP, posicaoCartasJogador));
+        StartCoroutine(AdicionaNoMonte(cartaI, posicaoCartasJogador));
+        SetTurnState(TurnState.Comeco);
+    }
+    /*
+     *  Função chamada no final da comaparação para adicionar as cartas ao inimigo
+     */
+    private void AdicionaNoMonteInimigo()
+    {
+        var cartaP = CartasDoPlayer.ElementAt(0);
+        var cartaI = CartasDoAdversario.ElementAt(0);
+        CartasDoAdversario.RemoveAt(0);
+        CartasDoPlayer.RemoveAt(0);
+
+        cartaP.transform.parent = posicaoCartasAdversario.transform;
+        CartasDoAdversario.Add(cartaP);
+        cartaI.transform.parent = posicaoCartasAdversario.transform;
+        CartasDoAdversario.Add(cartaI);
+
+        cartaP.GetComponent<CartaScript>().VirarCarta();
+        cartaI.GetComponent<CartaScript>().VirarCarta();
+
+        StartCoroutine(AdicionaNoMonte(cartaP, posicaoCartasAdversario));
+        StartCoroutine(AdicionaNoMonte(cartaI, posicaoCartasAdversario));
+        SetTurnState(TurnState.Comeco);
+    }
 }
