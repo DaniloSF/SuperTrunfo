@@ -280,9 +280,10 @@ public class GameManager : TurnManager
                     }
                     else
                     {
-
+                        DealingCardsSound.time = 9.8f;
+                        DealingCardsSound.Play();
                         if (CartasDoMonte.Count > 0)
-                        {
+                        {                           
                             AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Fim);
                             AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 0, posicaoCartasAdversario, TurnState.Fim);
                         }
@@ -301,7 +302,8 @@ public class GameManager : TurnManager
                     }
                     else
                     {
-
+                        DealingCardsSound.time = 9.8f;
+                        DealingCardsSound.Play();
                         if (CartasDoMonte.Count > 0)
                         {
                             AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoPlayer, 1, posicaoCartasJogador, TurnState.Fim);
@@ -309,6 +311,7 @@ public class GameManager : TurnManager
                         }
                         else
                         {
+             
                             AdicionaNoMonte(CartasDoAdversario, 1, CartasDoPlayer, 1, posicaoCartasJogador, TurnState.Fim);
                         }
                         delay = 1f;
@@ -320,6 +323,8 @@ public class GameManager : TurnManager
                         delay -= Time.deltaTime;
                     else
                     {
+                        DealingCardsSound.time = 9.5f;
+                        DealingCardsSound.Play();
                         AdicionaNoMonte(CartasDoAdversario, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Comeco);
                         AdicionaNoMonte(CartasDoPlayer, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Comeco);
                         if (CartasDoAdversario.Count == 0 || CartasDoPlayer.Count == 0)
@@ -422,19 +427,21 @@ public class GameManager : TurnManager
                     //print("Derrota");
                     Resultado.GetComponent<TextMeshPro>().text = "Derrota!";
                     SetTurnState(TurnState.Derrota);
-                    FailRoundSound.PlayDelayed(0.3f);
+                    FailRoundSound.time = 0.65f;
+                    FailRoundSound.Play();
                     break;
                 case 0:
                     //print("Empate");
                     Resultado.GetComponent<TextMeshPro>().text = "Empate!";
                     SetTurnState(TurnState.Empate);
-                    DrumsSound.PlayScheduled(1);
+                    DrumsSound.Play();
                     break;
                 case 1:
                     //print("Vitoria");
                     Resultado.GetComponent<TextMeshPro>().text = "Vitória!";
                     SetTurnState(TurnState.Vitoria);
-                    WinRoundSound.PlayDelayed(0.3f);
+                    WinRoundSound.time = 0.55f;
+                    WinRoundSound.Play();
                     break;
             }
 

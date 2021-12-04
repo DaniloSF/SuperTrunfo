@@ -15,10 +15,14 @@ public class EndManager : MonoBehaviour
     {
         if (VencedorGlobal.isWinner)
         {
+            AudioSource VictorySong = GameObject.Find("VictorySong").GetComponent<AudioSource>();
+            VictorySong.Play();
             GetComponent<Text>().text = "Parabéns! Você venceu!";
         }
         else
         {
+            AudioSource DefeatSong = GameObject.Find("DefeatSong").GetComponent<AudioSource>();
+            DefeatSong.Play();
             GetComponent<Text>().text = "A CPU te derrotou, que pena!";
         }
     }
