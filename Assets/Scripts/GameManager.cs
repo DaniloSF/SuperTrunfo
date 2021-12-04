@@ -28,6 +28,8 @@ public class GameManager : TurnManager
     public GameObject Escolhas;
     public int statsEscolhido = -1;
 
+    public GameObject IndicadorEscolhido;
+
     public float delay = 0f;
 
     /*
@@ -216,6 +218,7 @@ public class GameManager : TurnManager
                 case TurnState.Comparar:
                     MostrarPrimeiraCarta(CartasDoAdversario);
                     CompararValores();
+                    MostrarEscolhido();
                     delay = 1f;
                     break;
                 case TurnState.Derrota:
@@ -224,6 +227,8 @@ public class GameManager : TurnManager
                     }
                     else
                     {
+                        EsconderEscolhido();
+
                         if (CartasDoMonte.Count > 0)
                         {
                             AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Fim);
@@ -233,7 +238,7 @@ public class GameManager : TurnManager
                         {
                             AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Fim);
                         }
-                        delay = 1f;
+                        delay = 1.2f;
                     }
                     break;
                     
@@ -244,6 +249,8 @@ public class GameManager : TurnManager
                     }
                     else
                     {
+                        EsconderEscolhido();
+
                         if (CartasDoMonte.Count > 0)
                         {
                             AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoPlayer, 1, posicaoCartasJogador, TurnState.Fim);
@@ -262,9 +269,8 @@ public class GameManager : TurnManager
                         delay -= Time.deltaTime;
                     else
                     {
-                        print(CartasDoAdversario);
-                        print(CartasDoMonte);
-                        print(posicaoCartasMonte);
+                        EsconderEscolhido();
+                        
                         AdicionaNoMonte(CartasDoAdversario, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
                         AdicionaNoMonte(CartasDoPlayer, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
                         delay = 1f;
@@ -288,7 +294,29 @@ public class GameManager : TurnManager
         
     }
 
+    private void MostrarEscolhido()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if(i != statsEscolhido) IndicadorEscolhido.transform.GetChild(i).gameObject.SetActive(false);
+        }
         
+        var display = IndicadorEscolhido.transform.GetChild(statsEscolhido).gameObject;
+        display.SetActive(true);
+
+        var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
+        textDisplay.SetActive(true);
+        
+    }
+
+    private void EsconderEscolhido()
+    {
+        var display = IndicadorEscolhido.transform.GetChild(statsEscolhido).gameObject;
+        display.SetActive(false);
+
+        var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
+        textDisplay.SetActive(false);
+    }
     /*
      * Chama VirarCarta da primeira carta na lista do Player e poe em relevo no axis Z para sorting order
      */
@@ -344,6 +372,10 @@ public class GameManager : TurnManager
                     cartaI_Stat = cartaI_ID.saciedade;
                     break;
             }
+
+            var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
+            textDisplay.GetComponent<TextMesh>().text = cartaP_Stat + " vs " + cartaI_Stat;
+
             switch (cartaP_Stat.CompareTo(cartaI_Stat))
             {
                 case -1:
@@ -359,8 +391,8 @@ public class GameManager : TurnManager
                     SetTurnState(TurnState.Vitoria);
                     break;
             }
-            
 
+            
         }
     }
 
