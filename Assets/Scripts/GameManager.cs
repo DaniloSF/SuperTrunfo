@@ -34,9 +34,14 @@ public class GameManager : TurnManager
     public GameObject Resultado;
     public int statsEscolhido = -1;
 
-    public GameObject IndicadorEscolhido;
-
     public float delay = 0f;
+
+    // audios
+    public AudioSource FailRoundSound;
+    public AudioSource BackgroundMusic;
+    public AudioSource DealingCardsSound;
+    public AudioSource DrumsSound;
+    public AudioSource WinRoundSound;
 
     /*
      * No método start, a principio temo o chamdo do método para gerar o baralho e em seguida
@@ -44,7 +49,13 @@ public class GameManager : TurnManager
      */
     void Start()
     {
-        
+        // inicializando os áudios
+        FailRoundSound = GameObject.Find("FailSound").GetComponent<AudioSource>();
+        DealingCardsSound = GameObject.Find("DealingCardsSound").GetComponent<AudioSource>();
+        DrumsSound = GameObject.Find("DrumsSound").GetComponent<AudioSource>();
+        WinRoundSound = GameObject.Find("WinSound").GetComponent<AudioSource>();
+        BackgroundMusic = GameObject.Find("BackgroundMusic").GetComponent<AudioSource>();
+
         PlayerCartasColider = posicaoCartasJogador.GetComponent<BoxCollider2D>();
         //turnManager = GetComponent<TurnManager>();
         GeraBaralho();
@@ -52,6 +63,8 @@ public class GameManager : TurnManager
         {   
             carta.GetComponent<CartaScript>().VirarCarta();
         }
+
+        BackgroundMusic.Play();
     }
 
     
@@ -91,7 +104,8 @@ public class GameManager : TurnManager
      */
     private IEnumerator DistribuiCarta()
     {
-        for(int i = 0; i < CartasDoPlayer.Count; i++)
+        DealingCardsSound.Play();
+        for (int i = 0; i < CartasDoPlayer.Count; i++)
         {
             var cartaP = CartasDoPlayer.ElementAt(i);
             StartCoroutine(AdicionaNoMonte(cartaP, posicaoCartasJogador));
@@ -101,6 +115,7 @@ public class GameManager : TurnManager
         }
         //yield return new WaitForSeconds(1f);
         SetGameReady(true);
+        DealingCardsSound.Stop();
     }
 
     
@@ -265,7 +280,6 @@ public class GameManager : TurnManager
                     }
                     else
                     {
-                        EsconderEscolhido();
 
                         if (CartasDoMonte.Count > 0)
                         {
@@ -287,7 +301,6 @@ public class GameManager : TurnManager
                     }
                     else
                     {
-                        EsconderEscolhido();
 
                         if (CartasDoMonte.Count > 0)
                         {
@@ -347,29 +360,6 @@ public class GameManager : TurnManager
         
     }
 
-    private void MostrarEscolhido()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            if(i != statsEscolhido) IndicadorEscolhido.transform.GetChild(i).gameObject.SetActive(false);
-        }
-        
-        var display = IndicadorEscolhido.transform.GetChild(statsEscolhido).gameObject;
-        display.SetActive(true);
-
-        var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
-        textDisplay.SetActive(true);
-        
-    }
-
-    private void EsconderEscolhido()
-    {
-        var display = IndicadorEscolhido.transform.GetChild(statsEscolhido).gameObject;
-        display.SetActive(false);
-
-        var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
-        textDisplay.SetActive(false);
-    }
     /*
      * Chama VirarCarta da primeira carta na lista do Player e poe em relevo no axis Z para sorting order
      */
@@ -426,25 +416,25 @@ public class GameManager : TurnManager
                     break;
             }
 
-            var textDisplay = IndicadorEscolhido.transform.GetChild(3).gameObject;
-            textDisplay.GetComponent<TextMesh>().text = cartaP_Stat + " vs " + cartaI_Stat;
-
             switch (cartaP_Stat.CompareTo(cartaI_Stat))
             {
                 case -1:
                     //print("Derrota");
                     Resultado.GetComponent<TextMeshPro>().text = "Derrota!";
                     SetTurnState(TurnState.Derrota);
+                    FailRoundSound.PlayDelayed(0.3f);
                     break;
                 case 0:
                     //print("Empate");
                     Resultado.GetComponent<TextMeshPro>().text = "Empate!";
                     SetTurnState(TurnState.Empate);
+                    DrumsSound.PlayScheduled(1);
                     break;
                 case 1:
                     //print("Vitoria");
                     Resultado.GetComponent<TextMeshPro>().text = "Vitória!";
                     SetTurnState(TurnState.Vitoria);
+                    WinRoundSound.PlayDelayed(0.3f);
                     break;
             }
 
