@@ -207,6 +207,11 @@ public class GameManager : TurnManager
                 case TurnState.Escolher:
                     MostrarPrimeiraCarta(CartasDoPlayer);
                     MostrarEscolhas();
+                    if(!isPlayerTurn)
+                    {
+                        EscolhaInimigo();
+                        SetTurnState(TurnState.Comparar);
+                    }
                     break;
                 case TurnState.Comparar:
                     MostrarPrimeiraCarta(CartasDoAdversario);
@@ -221,12 +226,12 @@ public class GameManager : TurnManager
                     {
                         if (CartasDoMonte.Count > 0)
                         {
-                            AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Comeco);
-                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 0, posicaoCartasAdversario, TurnState.Comeco);
+                            AdicionaNoMonte(CartasDoMonte, totalDeCartas, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Fim);
+                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 0, posicaoCartasAdversario, TurnState.Fim);
                         }
                         else
                         {
-                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Comeco);
+                            AdicionaNoMonte(CartasDoPlayer, 1, CartasDoAdversario, 1, posicaoCartasAdversario, TurnState.Fim);
                         }
                         delay = 1f;
                     }
@@ -273,6 +278,7 @@ public class GameManager : TurnManager
                     }
                     else
                     {
+                        PassTurn();
                         SetTurnState(TurnState.Comeco);
                     }
                     break;
@@ -374,7 +380,7 @@ public class GameManager : TurnManager
             {
                 cartaF.transform.parent = posicao.transform;
                 to.Add(cartaF.gameObject);
-                cartaF.VirarCarta();
+                if(cartaF.faceParaCima) cartaF.VirarCarta();
                 StartCoroutine(AdicionaNoMonte(cartaF.gameObject, posicao));
             }
             
@@ -388,7 +394,7 @@ public class GameManager : TurnManager
             {
                 cartaT.transform.parent = posicao.transform;
                 to.Add(cartaT.gameObject);
-                cartaT.VirarCarta();
+                if(cartaT.faceParaCima) cartaT.VirarCarta();
                 StartCoroutine(AdicionaNoMonte(cartaT.gameObject, posicao));
             }
         }
@@ -405,4 +411,26 @@ public class GameManager : TurnManager
         return cartaP;
     }
 
+    /*
+     *  Função para o adversário escolher um atributo
+     */
+
+    private void EscolhaInimigo()
+    {
+        var carta = GetPrimeiraCarta(CartasDoAdversario);
+        var maior = carta.identificadorDaCarta.popularidade;
+        statsEscolhido = 0;
+
+        if(carta.identificadorDaCarta.preco > maior) 
+        {
+            maior = carta.identificadorDaCarta.preco;
+            statsEscolhido = 1;
+        }
+        if(carta.identificadorDaCarta.saciedade > maior) 
+        {
+            maior = carta.identificadorDaCarta.saciedade;
+            statsEscolhido = 2;
+        }      
+        print("Stat: " + statsEscolhido);   
+    }
 }

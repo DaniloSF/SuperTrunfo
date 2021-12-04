@@ -38,7 +38,7 @@ public class TurnManager : MonoBehaviour
         isPlayerTurn = true;
     }
 
-    private void PassTurn()
+    protected void PassTurn()
     {
         isPlayerTurn = !isPlayerTurn;
 
