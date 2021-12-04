@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 
 /// <summary>
@@ -26,6 +28,10 @@ public class GameManager : TurnManager
     public BoxCollider2D PlayerCartasColider;
     //public TurnManager turnManager;
     public GameObject Escolhas;
+    public GameObject EscolhasAdversario;
+    public GameObject Numero;
+    public GameObject NumeroAdversario;
+    public GameObject Resultado;
     public int statsEscolhido = -1;
 
     public float delay = 0f;
@@ -44,7 +50,6 @@ public class GameManager : TurnManager
         {   
             carta.GetComponent<CartaScript>().VirarCarta();
         }
-        
     }
 
     
@@ -185,6 +190,47 @@ public class GameManager : TurnManager
     private void MostrarEscolhas()
     {
         Escolhas.SetActive(isPlayerTurn);
+        EscolhasAdversario.SetActive(!isPlayerTurn);
+    }
+
+    /*
+     * Ativa os gameObjects das escolhas individualmente
+     */
+    private void MostrarEscolhaSelecionada()
+    {
+        switch(statsEscolhido)
+        {
+        case -1:
+            Escolhas.transform.GetChild(0).gameObject.SetActive(true);
+            Escolhas.transform.GetChild(1).gameObject.SetActive(true);
+            Escolhas.transform.GetChild(2).gameObject.SetActive(true);
+
+            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(true);
+            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(true);
+            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(true);
+            break;
+        case 0:
+            Escolhas.transform.GetChild(1).gameObject.SetActive(false);
+            Escolhas.transform.GetChild(2).gameObject.SetActive(false);
+
+            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(false);
+            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(false);
+            break;
+        case 1:
+            Escolhas.transform.GetChild(0).gameObject.SetActive(false);
+            Escolhas.transform.GetChild(2).gameObject.SetActive(false);
+
+            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(false);
+            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(false);
+            break;
+        case 2:
+            Escolhas.transform.GetChild(0).gameObject.SetActive(false);
+            Escolhas.transform.GetChild(1).gameObject.SetActive(false);
+
+            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(false);
+            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(false);
+            break;
+        }
     }
 
     // Update is called once per frame
@@ -202,21 +248,35 @@ public class GameManager : TurnManager
                 case TurnState.Comeco:
                     statsEscolhido = -1;
                     turnState++;
+
+                    Numero.GetComponent<TextMeshPro>().text = "x " + CartasDoPlayer.Count;
+                    NumeroAdversario.GetComponent<TextMeshPro>().text = "x " + CartasDoAdversario.Count;
+                    Resultado.GetComponent<TextMeshPro>().text = "";
                     break;
 
                 case TurnState.Escolher:
                     MostrarPrimeiraCarta(CartasDoPlayer);
+                    MostrarEscolhaSelecionada();
                     MostrarEscolhas();
                     if(!isPlayerTurn)
                     {
                         EscolhaInimigo();
                         SetTurnState(TurnState.Comparar);
+                        delay = 1.5f;
                     }
+                    else delay = 0f;
                     break;
                 case TurnState.Comparar:
-                    MostrarPrimeiraCarta(CartasDoAdversario);
-                    CompararValores();
-                    delay = 1f;
+                    if (delay > float.Epsilon) { 
+                        delay -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        MostrarPrimeiraCarta(CartasDoAdversario);
+                        MostrarEscolhaSelecionada();
+                        CompararValores();
+                        delay = 2f;
+                    }
                     break;
                 case TurnState.Derrota:
                     if (delay > float.Epsilon) { 
@@ -265,8 +325,12 @@ public class GameManager : TurnManager
                         print(CartasDoAdversario);
                         print(CartasDoMonte);
                         print(posicaoCartasMonte);
-                        AdicionaNoMonte(CartasDoAdversario, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
-                        AdicionaNoMonte(CartasDoPlayer, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Escolher);
+                        AdicionaNoMonte(CartasDoAdversario, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Comeco);
+                        AdicionaNoMonte(CartasDoPlayer, 1, CartasDoMonte, 1, posicaoCartasMonte, TurnState.Comeco);
+                        if (CartasDoAdversario.Count == 0 || CartasDoPlayer.Count == 0)
+                        {
+                            SetTurnState(TurnState.Fim);
+                        }
                         delay = 1f;
                     }
                     break;
@@ -278,8 +342,21 @@ public class GameManager : TurnManager
                     }
                     else
                     {
-                        PassTurn();
-                        SetTurnState(TurnState.Comeco);
+                        if (CartasDoAdversario.Count == 0)
+                        {
+                            VencedorGlobal.isWinner = true;
+                            SceneManager.LoadScene("EndScreen");
+                        }
+                        else if (CartasDoPlayer.Count == 0)
+                        {
+                            VencedorGlobal.isWinner = false;
+                            SceneManager.LoadScene("EndScreen");
+                        }
+                        else
+                        {
+                            PassTurn();
+                            SetTurnState(TurnState.Comeco);
+                        }
                     }
                     break;
             }
@@ -347,15 +424,18 @@ public class GameManager : TurnManager
             switch (cartaP_Stat.CompareTo(cartaI_Stat))
             {
                 case -1:
-                    print("Derrota");
+                    //print("Derrota");
+                    Resultado.GetComponent<TextMeshPro>().text = "Derrota!";
                     SetTurnState(TurnState.Derrota);
                     break;
                 case 0:
-                    print("Empate");
+                    //print("Empate");
+                    Resultado.GetComponent<TextMeshPro>().text = "Empate!";
                     SetTurnState(TurnState.Empate);
                     break;
                 case 1:
-                    print("Vitoria");
+                    //print("Vitoria");
+                    Resultado.GetComponent<TextMeshPro>().text = "Vitória!";
                     SetTurnState(TurnState.Vitoria);
                     break;
             }
