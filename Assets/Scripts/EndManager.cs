@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class EndManager : MonoBehaviour
 {
-    // Mensagens aleatórias para aparecer na tela de vitória e derrota!
+    // Mensagens aleatórias na tela de vitória ou derrota
     string[] LoseMessages = new string[]
     {
         "\"CPU: Hoje é o seu dia de comer peixe!\"",
@@ -35,7 +35,7 @@ public class EndManager : MonoBehaviour
         Tela = GameObject.Find("Main Camera");
         if (VencedorGlobal.isWinner)
         {
-            Tela.GetComponent<Camera>().backgroundColor = new Color(0f, 0f, 0.5f);
+            Tela.GetComponent<Camera>().backgroundColor = new Color(0f, 0f, 0.7f);
             AudioSource VictorySong = GameObject.Find("VictorySong").GetComponent<AudioSource>();
             VictorySong.Play();
             GetComponent<Text>().text = "Parabéns! Você venceu!";
