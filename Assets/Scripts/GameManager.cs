@@ -58,6 +58,7 @@ public class GameManager : TurnManager
 
         PlayerCartasColider = posicaoCartasJogador.GetComponent<BoxCollider2D>();
         //turnManager = GetComponent<TurnManager>();
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
         GeraBaralho();
         foreach (var carta in Baralho)
         {   
