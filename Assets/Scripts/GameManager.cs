@@ -202,9 +202,14 @@ public class GameManager : TurnManager
     {
 
         for(var i = 0; i < 3; i++){
-            if(statsEscolhido != i){
+            if(statsEscolhido == -1){
                 Escolhas.transform.GetChild(i).gameObject.SetActive(true);
                 EscolhasAdversario.transform.GetChild(i).gameObject.SetActive(true);
+            }else{
+                if(statsEscolhido != i){
+                    Escolhas.transform.GetChild(i).gameObject.SetActive(false);
+                    EscolhasAdversario.transform.GetChild(i).gameObject.SetActive(false);
+                }
             }
         }
     }
