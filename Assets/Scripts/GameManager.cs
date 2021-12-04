@@ -200,38 +200,12 @@ public class GameManager : TurnManager
      */
     private void MostrarEscolhaSelecionada()
     {
-        switch(statsEscolhido)
-        {
-        case -1:
-            Escolhas.transform.GetChild(0).gameObject.SetActive(true);
-            Escolhas.transform.GetChild(1).gameObject.SetActive(true);
-            Escolhas.transform.GetChild(2).gameObject.SetActive(true);
 
-            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(true);
-            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(true);
-            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(true);
-            break;
-        case 0:
-            Escolhas.transform.GetChild(1).gameObject.SetActive(false);
-            Escolhas.transform.GetChild(2).gameObject.SetActive(false);
-
-            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(false);
-            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(false);
-            break;
-        case 1:
-            Escolhas.transform.GetChild(0).gameObject.SetActive(false);
-            Escolhas.transform.GetChild(2).gameObject.SetActive(false);
-
-            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(false);
-            EscolhasAdversario.transform.GetChild(2).gameObject.SetActive(false);
-            break;
-        case 2:
-            Escolhas.transform.GetChild(0).gameObject.SetActive(false);
-            Escolhas.transform.GetChild(1).gameObject.SetActive(false);
-
-            EscolhasAdversario.transform.GetChild(0).gameObject.SetActive(false);
-            EscolhasAdversario.transform.GetChild(1).gameObject.SetActive(false);
-            break;
+        for(var i = 0; i < 3; i++){
+            if(statsEscolhido != i){
+                Escolhas.transform.GetChild(i).gameObject.SetActive(true);
+                EscolhasAdversario.transform.GetChild(i).gameObject.SetActive(true);
+            }
         }
     }
 
