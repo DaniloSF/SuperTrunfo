@@ -9,5 +9,5 @@ using UnityEngine;
 
 public static class VencedorGlobal
 {
-    public static bool isWinner = false;
+    public static bool isWinner = true;
 }
