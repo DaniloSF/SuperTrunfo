@@ -35,6 +35,23 @@ public class Botoes : MonoBehaviour
      */
     public void Credits()
     {
-
+        SceneManager.LoadScene("Creditos1");
     }
+
+    /*
+     * método para ir para a próxima tela de créditos quando apertado o botão
+     */
+    public void NextCredits()
+    {
+        SceneManager.LoadScene("Creditos2");
+    }
+
+    /*
+     * Sair do jogo
+     */
+    public void Sair()
+    {
+        print("Exiting...");
+        Application.Quit();
+    } 
 }
