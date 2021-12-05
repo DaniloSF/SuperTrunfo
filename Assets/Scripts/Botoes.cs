@@ -23,7 +23,7 @@ public class Botoes : MonoBehaviour
     }
 
     /*
-     * Reinicia o jogo
+     * Inicia o jogo
      */
     public void Restart()
     {
@@ -54,4 +54,20 @@ public class Botoes : MonoBehaviour
         print("Exiting...");
         Application.Quit();
     } 
+
+    /*
+     * Abre a tela de instruções
+     */
+    public void Instructions()
+    {
+        SceneManager.LoadScene("Instructions");
+    } 
+
+    /*
+     * Volta para o menu principal
+     */
+    public void Menu()
+    {
+        SceneManager.LoadScene("Inicial");
+    }  
 }
