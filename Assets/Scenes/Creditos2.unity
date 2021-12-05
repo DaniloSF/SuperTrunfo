@@ -1098,14 +1098,15 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Assets:
+  m_Text: 'Assets (audio)
 
 
-    Assets1
+    Final Fantasy IV - Fanfare
 
-    Assets2
+    Todas as outras musicas
+    e sons tirados de:
 
-    Assets3
+    orangefreesounds.com
 
 '
 --- !u!222 &1337795912
@@ -1229,16 +1230,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Assets:
-
-
-    Assets1
-
-    Assets2
-
-    Assets3
-
-'
+  m_Text: "Assets (cartas)\n\nAs cartas utilizadas s\xE3o de autoria do grupo\n"
 --- !u!222 &2043685105
 CanvasRenderer:
   m_ObjectHideFlags: 0
